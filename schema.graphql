@@ -240,6 +240,15 @@ type RoyaltiesRegistry @entity(immutable: true){
 	# royalties: [RoyaltyItem!]!
 }
 
+type RoyaltiesNFT @entity(immutable: true){
+	id: ID!
+	tokenId: String!
+	account: String!
+	value: Int!
+	contract: String!
+	# royalties: [RoyaltyItem!]!
+}
+
 enum ActionState {
   PENDING
   EXECUTED

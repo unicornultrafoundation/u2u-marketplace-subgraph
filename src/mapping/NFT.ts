@@ -1,4 +1,4 @@
-import { Account, Creator, ERC1155Balance, ERC1155Contract, ERC1155Creator, ERC1155Token, ERC1155Transfer, ERC721Contract, ERC721Creator, ERC721Token, ERC721Transfer, Transaction } from "../../generated/schema";
+import { Account, Creator, ERC1155Balance, ERC1155Contract, ERC1155Creator, ERC1155Token, ERC1155Transfer, ERC721Contract, ERC721Creator, ERC721Token, ERC721Transfer, Transaction , RoyaltiesNFT } from "../../generated/schema";
 import { Approval, ApprovalForAll, BaseUriChanged, CreateERC721Rarible, CreateERC721RaribleUser, Creators, DefaultApproval, MinterStatusChanged, RoyaltiesSet, Transfer } from "../../generated/templates/ERC721Proxy/ERC721Proxy";
 import { CreateERC1155Rarible, CreateERC1155RaribleUser, Supply, TransferBatch, TransferSingle, URI } from "../../generated/templates/ERC1155Proxy/ERC1155Proxy";
 import { Address, BigInt, log } from "@graphprotocol/graph-ts";
@@ -106,7 +106,20 @@ export function handleMinterStatusChanged(event: MinterStatusChanged): void {
   // Logic to handle the MinterStatusChanged event
 }
 
+
 export function handleRoyaltiesSet(event: RoyaltiesSet): void {
+  const listroyalties = event.params.royalties;
+  for(let i =0 ; i < listroyalties.length ; i++){
+    let registry = RoyaltiesNFT.load(event.address.toHexString()+ '-' + event.params.tokenId.toString() + '-' + listroyalties[i].account.toHexString());
+    if (registry == null) {
+      registry = new RoyaltiesNFT(event.address.toHexString()+ '-' + event.params.tokenId.toString() + '-' + listroyalties[i].account.toHexString());
+      registry.tokenId = event.params.tokenId.toString();
+      registry.account = listroyalties[i].account.toHexString();
+      registry.value = listroyalties[i].value.toI32();
+      registry.contract = event.address.toHexString();
+    }
+    registry.save();
+  }
   // Logic to handle the RoyaltiesSet event
 }
 
