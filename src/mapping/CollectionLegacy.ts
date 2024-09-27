@@ -15,6 +15,7 @@ export function handle721UserProxyLegacy(event: Create721Legacy): void {
     newToken.txCreation = event.transaction.hash.toHexString();
     newToken.count = BigInt.fromI32(0);
     newToken.holderCount = BigInt.fromI32(0);
+    newToken.transactionCount = BigInt.fromI32(0);
     newToken.volume = BigInt.fromI32(0);
     newToken.createAt = event.block.timestamp;
     NFTLegacy.create(event.params.proxy);

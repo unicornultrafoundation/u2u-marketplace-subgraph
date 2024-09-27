@@ -9,7 +9,8 @@
     "remove-local": "graph remove --node http://localhost:8020/ u2u/marketplace",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 u2u/marketplace -l v0.0.1",
     "prepare:mainnet": "mustache ./config/u2u.json template.prod.yaml > subgraph.yaml && mustache ./config/u2u.json ./src/templateEnum.ts > ./src/enum.ts",
-    "prepare:testnet": "mustache ./config/u2uTestnet.json template.yaml > subgraph.yaml && mustache ./config/u2uTestnet.json ./src/templateEnum.ts > ./src/enum.ts"
+    "prepare:testnet": "mustache ./config/u2uTestnet.json template.yaml > subgraph.yaml && mustache ./config/u2uTestnet.json ./src/templateEnum.ts > ./src/enum.ts",
+    "prepare:local": "mustache ./config/u2uTestnet.json template.local.yaml > subgraph.yaml && mustache ./config/u2uTestnet.json ./src/templateEnum.ts > ./src/enum.ts"
   },
   "dependencies": {
     "@graphprotocol/graph-ts": "0.31.0",

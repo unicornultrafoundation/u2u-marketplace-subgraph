@@ -1,7 +1,8 @@
-import { AccountCollectionOwnership, Block, ERC1155Contract, ERC1155Token, ERC721Contract, ERC721Token, OnSaleStatus1155, OwnedTokenCount } from "../generated/schema"
+import { AccountCollectionOwnership, Block, ERC1155Contract, ERC1155Token, ERC721Contract, ERC721Token, MarketVolume, OnSaleStatus1155, OwnedTokenCount } from "../generated/schema"
 import { Account, ERC1155Balance } from "../generated/schema"
 import { Address, BigInt, ethereum, log, store } from "@graphprotocol/graph-ts/index"
-import { ContractName } from './enum'
+import { ContractAddress, ContractName } from './enum'
+import { ERC721Proxy } from "../generated/templates";
 
 export function fetchOrCreateAccount(address: Address): Account {
     let accountId = address.toHex();
@@ -19,12 +20,44 @@ export function generateCombineKey(keys: string[]): string {
     
     return keys.join('-');
 }
-export function fetchOrCreateERC721Tokens(contractAddress: string, tokenId: string): ERC721Token {
+export function fetchOrCreateERC721Contract(contractAddress: string, txHash: string): ERC721Contract {
+    let contract = ERC721Contract.load(contractAddress)
+    if (contract == null) {
+        // contract = new ERC721Contract(contractAddress)
+        contract = new ERC721Contract(contractAddress);
+      contract.name = null;
+      contract.symbol = null;
+      contract.txCreation = txHash
+      contract.count = BigInt.fromI32(0);
+      contract.volume = BigInt.fromI32(0);
+      contract.asAccount = ContractAddress.ZERO
+      contract.holderCount = BigInt.fromI32(0);
+      contract.transactionCount=  BigInt.fromI32(0);
+      contract.createAt = BigInt.fromI32(0);
+      contract.save()
+      ERC721Proxy.create(Address.fromString(contractAddress))
+
+    }
+    return contract
+}
+export function fetchOrCreateERC721Tokens(contractAddress: string, tokenId: string, txHash: string, owner: string): ERC721Token {
     let id = generateCombineKey([contractAddress, tokenId]);
     log.warning('generated id: {}',[id])
     let token = ERC721Token.load(id);
     if (token == null) {
+        let account = fetchOrCreateAccount(Address.fromString(owner))
         token = new ERC721Token(id);
+        token.contract = fetchOrCreateERC721Contract(contractAddress, txHash).id
+        token.tokenId = tokenId
+        token.identifier = BigInt.fromString(tokenId);
+        token.owner = account.id
+        token.txCreation = txHash
+        let zeroAccount = fetchOrCreateAccount(Address.fromString(ContractAddress.ZERO));
+        token.createAt = BigInt.fromI32(0);
+        updateContractCount(contractAddress, BigInt.fromI32(1), 'ERC721');    
+        token.approval = zeroAccount.id;
+        token.uri = ""; // Set the URI based on your logic
+        token.save();
     }
     return token;
 }
@@ -71,7 +104,7 @@ export function updateOnSaleCount1155(accountAddress: Address, collection: Addre
             account.save()
         }
     } else {
-        let isOnSaleBefore = updateSaleStatus1155(accountAddress, collection, tokenId, true);
+        let isOnSaleBefore = updateSaleStatus1155(accountAddress, collection, tokenId, false);
         let account = fetchOrCreateAccount(accountAddress);
         if (isOnSaleBefore) {
             account.onSaleCount = account.onSaleCount.minus(BigInt.fromI32(1));
@@ -174,13 +207,15 @@ export function updateOwnedTokenCount(accountId: string, contractAddress: string
     let isOwner = ownedTokenCount.count.gt(BigInt.fromI32(0));
 
     // if (isERC721) {
-    let contract721 = ERC721Contract.load(contractAddress)!;
-    if (!wasOwner && isOwner) {
-        contract721.holderCount = contract721.holderCount.plus(BigInt.fromI32(1));
-    } else if (wasOwner && !isOwner) {
-        contract721.holderCount = contract721.holderCount.minus(BigInt.fromI32(1));
+    let contract721 = ERC721Contract.load(contractAddress);
+    if(contract721){
+        if (!wasOwner && isOwner) {
+            contract721.holderCount = contract721.holderCount.plus(BigInt.fromI32(1));
+        } else if (wasOwner && !isOwner) {
+            contract721.holderCount = contract721.holderCount.minus(BigInt.fromI32(1));
+        }
+        contract721.save();
     }
-    contract721.save();
     ownedTokenCount.timestamp = timestamp
     ownedTokenCount.save();
 }
@@ -228,3 +263,51 @@ export function updateBlockEntity(event: ethereum.Event, contract: Address, toke
     block.save()
   }
 }
+
+export function updateTotalVolumeMarket(collectionAddress: Address, type: string, netPrice: BigInt ,quantity: BigInt): void {
+    log.info('===============updateTotalVolumeMarket==================: {} {}, {}, {}', [collectionAddress.toHexString(), type.toString(), netPrice.toString(), quantity.toString()]);
+    if (type === 'ERC721') {
+        let contract = MarketVolume.load(collectionAddress.toHexString());
+        if (contract) {
+            let volume = netPrice.times(quantity)
+            contract.totalVolume = contract.totalVolume.plus(volume);
+            contract.save()
+        } else {
+            let newcontract = new MarketVolume(collectionAddress.toHexString());
+            newcontract.totalVolume = BigInt.fromI32(0);
+            newcontract.type = type;
+            newcontract.save()
+        }
+    } else {
+        let volume = netPrice.times(quantity)
+        let contract = MarketVolume.load(collectionAddress.toHexString());
+        if (contract) {
+            contract.totalVolume = contract.totalVolume.plus(volume);
+            contract.save();
+        }else{
+            let newcontract = new MarketVolume(collectionAddress.toHexString());
+            newcontract.totalVolume = BigInt.fromI32(0);
+            newcontract.type = type;
+            newcontract.save()
+        }
+    }
+}
+
+export function updateTotalTransactionCollection(collectionAddress: string, type: string): void {
+    log.info('========updateTotalTransactionCollection=======: {} {}', [collectionAddress, type.toString()]);
+    if (type === 'ERC721') {
+        let contract = ERC721Contract.load(collectionAddress);
+        if (contract) {
+            contract.transactionCount = contract.transactionCount.plus(BigInt.fromI32(1));
+            contract.save()
+        }
+    } else {
+        let contract = ERC1155Contract.load(collectionAddress);
+        if (contract) {
+            contract.transactionCount = contract.transactionCount.plus(BigInt.fromI32(1));
+            contract.save();
+        }
+    }
+}
+
+

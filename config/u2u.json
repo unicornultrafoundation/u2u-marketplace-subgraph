@@ -29,6 +29,11 @@
     "address": "0xda125aec64761868e38a1fe228cf3c4263218c39",
     "name" : "unicerans"
   },
+  "u2uni" : {
+    "address": "0x8D244EF3f66be3910cbb16Fc63b85C1d67B3F17F",
+    "name" : "u2uni",
+    "startBlock": "6288730"
+  },
 "royaltiesRegistry": {
     "address": "0x2Ed0dA2fE3703081BdeE5aa69D7a5623be0B5CA0",
     "startBlock" : "5310000"

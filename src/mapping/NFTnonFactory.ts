@@ -23,6 +23,7 @@ import { ContractAddress } from "../enum";
       contract.volume = BigInt.fromI32(0);
       contract.asAccount = fetchOrCreateAccount(event.params.to).id;
       contract.holderCount = BigInt.fromI32(0);
+      contract.transactionCount=  BigInt.fromI32(0);
       contract.createAt = event.block.timestamp;
       contract.save()
     }
@@ -111,6 +112,7 @@ import { ContractAddress } from "../enum";
       contract.volume = BigInt.fromI32(0);
       contract.asAccount = fetchOrCreateAccount(event.params.to).id;
       contract.holderCount = BigInt.fromI32(0);
+      contract.transactionCount=  BigInt.fromI32(0);
       contract.save()
     }
     // if (event.params.from != Address.fromString(ContractAddress.ZERO)) {
@@ -206,6 +208,7 @@ import { ContractAddress } from "../enum";
       contract.createAt = event.block.timestamp;
       contract.asAccount = fetchOrCreateAccount(event.params.to).id;
       contract.holderCount = BigInt.fromI32(0);
+      contract.transactionCount=  BigInt.fromI32(0);
       contract.save()
     }
     let transaction = Transaction.load(event.transaction.hash.toHex());

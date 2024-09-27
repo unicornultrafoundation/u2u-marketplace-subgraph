@@ -50,26 +50,26 @@ type Account @entity {
 }
 
 type OwnedTokenCount @entity {
-    id: ID!
-    contract: String!
-    owner: Account!
-	count: BigInt!
-	timestamp: BigInt!
+  id: ID!
+  contract: String!
+  owner: Account!
+  count: BigInt!
+  timestamp: BigInt!
 }
 
 type AccountCollectionOwnership @entity {
-    id: ID!
-    account: Account!
-    contract: String!
-    ownsTokens: Boolean!
+  id: ID!
+  account: Account!
+  contract: String!
+  ownsTokens: Boolean!
 }
 
 type  OnSaleStatus1155 @entity {
-	id: ID!
-	contract: String!
-	tokenId: BigInt!
-	owner: Account!
-	isOnSale: Boolean!
+  id: ID!
+  contract: String!
+  tokenId: BigInt!
+  owner: Account!
+  isOnSale: Boolean!
 }
 
 type ERC721Contract @entity {
@@ -85,6 +85,7 @@ type ERC721Contract @entity {
 	holderCount: BigInt!
 	createAt: BigInt
 	volume: BigInt!
+	transactionCount: BigInt!
 }
 type ERC721Token @entity {
 	id: ID!
@@ -123,6 +124,7 @@ type ERC1155Contract @entity {
 	holderCount: BigInt!
 	createAt: BigInt
 	volume: BigInt!
+	transactionCount: BigInt!
 }
 
 type ERC1155Creator @entity {
@@ -153,7 +155,7 @@ type ERC1155Token @entity {
 	totalSupply: ERC1155Balance!
 	balances: [ERC1155Balance!]! @derivedFrom(field: "token")
 	transfers: [ERC1155Transfer!]! @derivedFrom(field: "token")
-  	creators: [ERC1155Creator!]! @derivedFrom(field: "collection")
+	creators: [ERC1155Creator!]! @derivedFrom(field: "collection")
 	txCreation: String!
 	createAt: BigInt
 }
@@ -201,6 +203,9 @@ type MarketEvent721 @entity {
 	event: SellStatus! # action type
 	address: String!
 	nftId: ERC721Token
+	nftIdExtend: String
+	tokenId: String
+	addressExtend: String
 	from: String
 	to: String
 	metadata: String
@@ -208,6 +213,7 @@ type MarketEvent721 @entity {
 	price: BigInt
 	netPrice: BigInt
 	quoteToken: String
+	flagExtend: Boolean
 }
 
 type MarketEvent1155 @entity {
@@ -225,6 +231,10 @@ type MarketEvent1155 @entity {
   quoteToken: String # Address of the quote token (e.g., WETH, ERC20)
   quantity: BigInt! # Number of tokens involved in the transaction
   operationId: BigInt # For ERC1155 only
+  nftIdExtend: String
+  tokenId: String
+  addressExtend: String
+  flagExtend: Boolean
 }
 
 enum Operation {
@@ -264,6 +274,18 @@ type RoyaltiesRegistry @entity(immutable: true){
 # 	totalCollection: BigInt!
 # 	totalProtocolFee: BigInt!
 # }
+
+type MarketVolume @entity{
+	id: String!
+	type: String!
+	totalVolume: BigInt!,
+}
+
+type MarketFee @entity{
+	id: String!
+	type: String!
+	totalFee: BigInt!,
+}
 
 enum ActionState {
   PENDING

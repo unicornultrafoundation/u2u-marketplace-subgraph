@@ -1,29 +1,30 @@
+
 specVersion: 0.0.4
 description: Tracker of U2U marketplace
 repository: https://github.com/rariblecom/subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum/contract
-    name: ERC721FactoryLegacy
-    network: {{network}}
-    source:
-      address: '{{erc721LegacyFactory.address}}'
-      abi: ERC721LegacyFactory
-      startBlock: {{erc721LegacyFactory.startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      file: ./src/mapping/CollectionLegacy.ts
-      entities:
-        - Collection
-      abis:
-        - name: ERC721LegacyFactory
-          file: ./abis/ERC721LegacyFactory.json
-      eventHandlers:
-        - event: Create721RaribleUserProxy(address)
-          handler: handle721UserProxyLegacy
+  # - kind: ethereum/contract
+  #   name: ERC721FactoryLegacy
+  #   network: {{network}}
+  #   source:
+  #     address: '{{erc721LegacyFactory.address}}'
+  #     abi: ERC721LegacyFactory
+  #     startBlock: {{erc721LegacyFactory.startBlock}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     file: ./src/mapping/CollectionLegacy.ts
+  #     entities:
+  #       - Collection
+  #     abis:
+  #       - name: ERC721LegacyFactory
+  #         file: ./abis/ERC721LegacyFactory.json
+  #     eventHandlers:
+  #       - event: Create721RaribleUserProxy(address)
+  #         handler: handle721UserProxyLegacy
   - kind: ethereum/contract
     name: ERC721Factory
     network: {{network}}
@@ -98,8 +99,6 @@ dataSources:
           handler: handleBid
         - event: CancelBid(indexed address,indexed address,uint256)
           handler: handleCancelBid
-        - event: ProtocolFee(uint256)
-          handler: handleGetFee
 
   - kind: ethereum/contract
     name: ERC1155Marketplace
@@ -131,70 +130,68 @@ dataSources:
           handler: handleOfferNew
         - event: OfferCancel(uint256)
           handler: handleOfferCancel
-        - event: ProtocolFee(uint256)
-          handler: handleGetFee
-  - kind: ethereum/contract
-    name: NFT
-    network: {{network}}
-    source:
-      address: '{{erc721Nonfactory.address}}'
-      abi: NFT
-      startBlock: {{startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      file: ./src/mapping/NFTnonFactory.ts
-      entities:
-        - Item
-      abis:
-        - name: NFT
-          file: ./abis/ERC721Proxy.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
+  # - kind: ethereum/contract
+  #   name: NFT
+  #   network: {{network}}
+  #   source:
+  #     address: '{{erc721Nonfactory.address}}'
+  #     abi: NFT
+  #     startBlock: {{startBlock}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     file: ./src/mapping/NFTnonFactory.ts
+  #     entities:
+  #       - Item
+  #     abis:
+  #       - name: NFT
+  #         file: ./abis/ERC721Proxy.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,indexed uint256)
+  #         handler: handleTransfer
 
-  - kind: ethereum/contract
-    name: {{MVTLAND.name}}
-    network: {{network}}
-    source:
-      address: '{{MVTLAND.address}}'
-      abi: NFT
-      startBlock: {{MVTLAND.startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      file: ./src/mapping/NFTnonFactory.ts
-      entities:
-        - Item
-      abis:
-        - name: NFT
-          file: ./abis/ERC721Proxy.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
+  # - kind: ethereum/contract
+  #   name: {{MVTLAND.name}}
+  #   network: {{network}}
+  #   source:
+  #     address: '{{MVTLAND.address}}'
+  #     abi: NFT
+  #     startBlock: {{MVTLAND.startBlock}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     file: ./src/mapping/NFTnonFactory.ts
+  #     entities:
+  #       - Item
+  #     abis:
+  #       - name: NFT
+  #         file: ./abis/ERC721Proxy.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,indexed uint256)
+  #         handler: handleTransfer
 
-  - kind: ethereum/contract
-    name: {{MTV-ESTATE.name}}
-    network: {{network}}
-    source:
-      address: '{{MTV-ESTATE.address}}'
-      abi: NFT
-      startBlock: {{MTV-ESTATE.startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      file: ./src/mapping/NFTnonFactory.ts
-      entities:
-        - Item
-      abis:
-        - name: NFT
-          file: ./abis/ERC721Proxy.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
+  # - kind: ethereum/contract
+  #   name: {{MTV-ESTATE.name}}
+  #   network: {{network}}
+  #   source:
+  #     address: '{{MTV-ESTATE.address}}'
+  #     abi: NFT
+  #     startBlock: {{MTV-ESTATE.startBlock}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     file: ./src/mapping/NFTnonFactory.ts
+  #     entities:
+  #       - Item
+  #     abis:
+  #       - name: NFT
+  #         file: ./abis/ERC721Proxy.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,indexed uint256)
+  #         handler: handleTransfer
 
   - kind: ethereum/contract
     name: ERC721Proxy
@@ -299,29 +296,29 @@ dataSources:
       eventHandlers:
         - event: RoyaltiesSetForContract(indexed address,(address,uint96)[])
           handler: handleRoyaltiesRegistry
-  - kind: ethereum/contract
-    name: {{u2unft_odyssean_voyage.name}}
-    network: {{network}}
-    source: 
-      address: '{{u2unft_odyssean_voyage.address}}'
-      abi: ERC1155Proxy
-      startBlock: {{startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      file: ./src/mapping/NFTnonFactory.ts
-      entities:
-        - Item
-        - Deal
-      abis:
-        - name: ERC1155Proxy
-          file: ./abis/ERC1155Proxy.json
-      eventHandlers:
-        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
-          handler: handleTranferBatch
-        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleTransferSingleNoFactory
+  # - kind: ethereum/contract
+  #   name: {{u2unft_odyssean_voyage.name}}
+  #   network: {{network}}
+  #   source: 
+  #     address: '{{u2unft_odyssean_voyage.address}}'
+  #     abi: ERC1155Proxy
+  #     startBlock: {{startBlock}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     file: ./src/mapping/NFTnonFactory.ts
+  #     entities:
+  #       - Item
+  #       - Deal
+  #     abis:
+  #       - name: ERC1155Proxy
+  #         file: ./abis/ERC1155Proxy.json
+  #     eventHandlers:
+  #       - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+  #         handler: handleTranferBatch
+  #       - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+  #         handler: handleTransferSingleNoFactory
 templates:
   - kind: ethereum/contract
     name: NFTLegacy

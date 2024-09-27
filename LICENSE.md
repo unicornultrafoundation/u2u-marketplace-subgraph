@@ -1,4 +1,4 @@
-Copyright (c) 2021, Rarible DAO
+Copyright (c) 2024, U2U
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
